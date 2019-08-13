@@ -176,19 +176,16 @@ quant<-function(q,t,cuml)
 }
 
 #Loss function
-lossf<-function(pop,eimax,z,v,gamma)
+lossf <- function(pop, eimax, z, v, gamma)
 {
         ##Loss function
-        p<-length(pop)
-        t<-pop[which(pop>0)]/eimax
-        w<-rep(1/p,length(which(pop>0)))
-        e<-rep(0,p)
-        for (i in 1:length(z))
-        {
-                term1<-sum(w*t/(1+v[i]*t))
-                e[i]=1/v[i]+z[i]-gamma*term1
-        }
-        L=max(abs(Re(e)),abs(Im(e))) #L is given by this
+        p <- length(pop)
+        t.inv <- eimax / pop[which(pop > 0)]
+        term1 <- sapply(v, function(v_i) {
+                sum(1 / (t.inv + v_i))
+        })
+        e <- 1 / v + z - (gamma / p) * term1
+        L <- max(abs(Re(e)), abs(Im(e))) #L is given by this
         return(L)
 }
 
